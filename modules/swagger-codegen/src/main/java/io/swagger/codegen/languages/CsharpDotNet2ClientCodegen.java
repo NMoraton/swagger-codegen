@@ -114,7 +114,7 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
             modelPackage = packageName + ".Model";
             //clientPackage = packageName + ".Client";
         } else {
-            additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName + "Test");
+            additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName);
         }
 
         if (additionalProperties.containsKey(CLIENT_PACKAGE)) {
