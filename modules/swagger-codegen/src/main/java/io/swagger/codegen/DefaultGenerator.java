@@ -92,6 +92,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
             Json.prettyPrint(swagger);
         }
         List<File> files = new ArrayList<File>();
+		config.preprocessOpts(swagger);
         config.processOpts();
         config.preprocessSwagger(swagger);
 

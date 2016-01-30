@@ -10,8 +10,9 @@ using System.Text;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Extensions;
+using RestSharp.Extensions.MonoHttp;
 
-namespace {{packageName}}.Client
+namespace {{clientPackage}}
 {
     /// <summary>
     /// API client is mainly responible for making the HTTP call to the API backend.
@@ -24,8 +25,10 @@ namespace {{packageName}}.Client
         /// Initializes a new instance of the <see cref="ApiClient" /> class.
         /// </summary>
         /// <param name="basePath">The base path.</param>
-        public ApiClient(String basePath="{{basePath}}")
+        public ApiClient(String basePath = "")
         {
+			if (String.IsNullOrEmpty(basePath))
+                throw new Exception("basePath must be supplied!");
             BasePath = basePath;
             RestClient = new RestClient(BasePath);
         }
@@ -116,7 +119,7 @@ namespace {{packageName}}.Client
         /// <returns>Escaped string.</returns>
         public string EscapeString(string str)
         {
-            return RestSharp.Contrib.HttpUtility.UrlEncode(str);
+            return HttpUtility.UrlEncode(str);
         }
     
         /// <summary>

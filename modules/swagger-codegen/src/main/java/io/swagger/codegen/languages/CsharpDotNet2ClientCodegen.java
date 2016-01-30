@@ -9,18 +9,26 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.codegen.CliOption;
+import io.swagger.models.Swagger;
+import io.swagger.models.Info;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.lang.System;
+import java.util.List;
+import java.util.Map;
+import java.util.Iterator;
 
 public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements CodegenConfig {
     public static final String CLIENT_PACKAGE = "clientPackage";
-    protected String packageName = "IO.Swagger";
+    protected String packageName = "Wonderlic.Swagger";
     protected String packageVersion = "1.0.0";
-    protected String clientPackage = "IO.Swagger.Client";
+    protected String clientPackage = "Wonderlic.Swagger.Client";
     protected String sourceFolder = "src" + File.separator + "main" + File.separator + "CsharpDotNet2";
+
+    protected String infoTitle = "";
 
     public CsharpDotNet2ClientCodegen() {
         super();
@@ -28,8 +36,8 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
         modelTemplateFiles.put("model.mustache", ".cs");
         apiTemplateFiles.put("api.mustache", ".cs");
         embeddedTemplateDir = templateDir = "CsharpDotNet2";
-        apiPackage = "IO.Swagger.Api";
-        modelPackage = "IO.Swagger.Model";
+        apiPackage = "Wonderlic.Swagger.Api";
+        modelPackage = "Wonderlic.Swagger.Model";
 
         reservedWords = new HashSet<String>(
                 Arrays.asList(
@@ -84,16 +92,16 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
 
         cliOptions.clear();
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_NAME, "C# package name (convention: Camel.Case).")
-                .defaultValue("IO.Swagger"));
+                .defaultValue("Wonderlic.Swagger"));
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_VERSION, "C# package version.").defaultValue("1.0.0"));
         cliOptions.add(new CliOption(CLIENT_PACKAGE, "C# client package name (convention: Camel.Case).")
-                .defaultValue("IO.Swagger.Client"));
+                .defaultValue("Wonderlic.Swagger.Client"));
     }
 
     @Override
     public void processOpts() {
         super.processOpts();
-
+		
         if (additionalProperties.containsKey(CodegenConstants.PACKAGE_VERSION)) {
             setPackageVersion((String) additionalProperties.get(CodegenConstants.PACKAGE_VERSION));
         } else {
@@ -104,9 +112,9 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
             setPackageName((String) additionalProperties.get(CodegenConstants.PACKAGE_NAME));
             apiPackage = packageName + ".Api";
             modelPackage = packageName + ".Model";
-            clientPackage = packageName + ".Client";
+            //clientPackage = packageName + ".Client";
         } else {
-            additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName);
+            additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName + "Test");
         }
 
         if (additionalProperties.containsKey(CLIENT_PACKAGE)) {
@@ -114,7 +122,6 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
         } else {
             additionalProperties.put(CLIENT_PACKAGE, clientPackage);
         }
-        
         supportingFiles.add(new SupportingFile("Configuration.mustache",
                 sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator), "Configuration.cs"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache",
@@ -161,12 +168,12 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
 
     @Override
     public String apiFileFolder() {
-        return outputFolder + File.separator + sourceFolder + File.separator + apiPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + sourceFolder + File.separator + apiPackage().replace('.', File.separatorChar) + File.separator + infoTitle;
     }
 
     @Override
     public String modelFileFolder() {
-        return outputFolder + File.separator + sourceFolder + File.separator + modelPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + sourceFolder + File.separator + modelPackage().replace('.', File.separatorChar) + File.separator + infoTitle;
     }
 
     @Override
@@ -272,4 +279,12 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
         return camelize(operationId);
     }
 
+    @Override
+	public void preprocessOpts(Swagger swagger) {
+		Info info = swagger.getInfo();
+		if (info.getTitle() != null) {
+			infoTitle = info.getTitle();
+			packageName = "Wonderlic.Swagger." + infoTitle;
+		}		
+    }
 }

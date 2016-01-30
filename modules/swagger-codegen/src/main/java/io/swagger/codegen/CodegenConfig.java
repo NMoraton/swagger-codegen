@@ -58,6 +58,8 @@ public interface CodegenConfig {
     String getTypeDeclaration(String name);
 
     void processOpts();
+	
+	void preprocessOpts(Swagger swagger);
 
     List<CliOption> cliOptions();
 

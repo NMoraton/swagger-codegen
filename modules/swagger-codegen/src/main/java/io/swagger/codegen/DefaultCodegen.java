@@ -140,6 +140,11 @@ public class DefaultCodegen {
     @SuppressWarnings("unused")
     public void preprocessSwagger(Swagger swagger) {
     }
+	
+	//override with any special handling of the entire swagger spec
+    @SuppressWarnings("unused")
+    public void preprocessOpts(Swagger swagger) {
+    }
 
     // override with any special handling of the entire swagger spec
     @SuppressWarnings("unused")
