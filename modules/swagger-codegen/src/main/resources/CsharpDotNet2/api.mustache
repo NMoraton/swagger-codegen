@@ -37,7 +37,7 @@ namespace {{packageName}}.Api
         public {{classname}}(ApiClient apiClient = null)
         {
             if (apiClient == null) // use the default one in Configuration
-                this.ApiClient = Configuration.DefaultApiClient; 
+                this.ApiClient = {{clientPackage}}.Configuration.DefaultApiClient; 
             else
                 this.ApiClient = apiClient;
         }

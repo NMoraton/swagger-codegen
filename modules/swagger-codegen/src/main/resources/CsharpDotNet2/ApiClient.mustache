@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Extensions;
 using RestSharp.Extensions.MonoHttp;
+using Wonderlic.Configuration;
 
 namespace {{clientPackage}}
 {
@@ -30,6 +31,17 @@ namespace {{clientPackage}}
 			if (String.IsNullOrEmpty(basePath))
                 throw new Exception("basePath must be supplied!");
             BasePath = basePath;
+            RestClient = new RestClient(BasePath);
+        }
+		
+		public ApiClient(String basePath, String authID, String authSecret, String authScopes)
+        {
+            if (String.IsNullOrEmpty(basePath))
+                throw new Exception("basePath must be supplied!");
+            BasePath = basePath;
+            AuthID = authID;
+            AuthSecret = authSecret;
+            AuthScopes = authScopes;
             RestClient = new RestClient(BasePath);
         }
     
@@ -52,6 +64,12 @@ namespace {{clientPackage}}
         {
             get { return _defaultHeaderMap; }
         }
+		
+		public String AuthID { get; set; }
+
+        public String AuthSecret { get; set; }
+        
+        public String AuthScopes { get; set; }
     
         /// <summary>
         /// Makes the HTTP request (Sync).
@@ -252,8 +270,8 @@ namespace {{clientPackage}}
         /// <param name="authSettings">Authentication settings.</param>
         public void UpdateParamsForAuth(Dictionary<String, String> queryParams, Dictionary<String, String> headerParams, string[] authSettings)
         {
-			OAuthClient OA = new OAuthClient(ConfigurationHelper.GetAppSettingsValue("AuthApiUrl", true, ""), ConfigurationHelper.GetAppSettingsValue("AuthId", true, ""), ConfigurationHelper.GetAppSettingsValue("AuthSecret", true, ""));
-            var accessToken = OA.RequestToken(ConfigurationHelper.GetAppSettingsValue("AuthScope", true, ""));
+			OAuthClient OA = new OAuthClient(ConfigurationHelper.GetAppSettingsValue("AuthApiUrl", true, ""), AuthID, AuthSecret);
+            var accessToken = OA.RequestToken(AuthScopes);
 
             headerParams.Add("authorization", "Bearer " + accessToken);
 		
