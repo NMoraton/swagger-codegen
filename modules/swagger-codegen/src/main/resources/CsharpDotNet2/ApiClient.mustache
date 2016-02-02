@@ -252,6 +252,11 @@ namespace {{clientPackage}}
         /// <param name="authSettings">Authentication settings.</param>
         public void UpdateParamsForAuth(Dictionary<String, String> queryParams, Dictionary<String, String> headerParams, string[] authSettings)
         {
+			OAuthClient OA = new OAuthClient(ConfigurationHelper.GetAppSettingsValue("AuthApiUrl", true, ""), ConfigurationHelper.GetAppSettingsValue("AuthId", true, ""), ConfigurationHelper.GetAppSettingsValue("AuthSecret", true, ""));
+            var accessToken = OA.RequestToken(ConfigurationHelper.GetAppSettingsValue("AuthScope", true, ""));
+
+            headerParams.Add("authorization", "Bearer " + accessToken);
+		
             if (authSettings == null || authSettings.Length == 0)
                 return;
 

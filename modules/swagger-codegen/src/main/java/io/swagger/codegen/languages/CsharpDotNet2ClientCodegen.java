@@ -23,9 +23,11 @@ import java.util.Iterator;
 
 public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements CodegenConfig {
     public static final String CLIENT_PACKAGE = "clientPackage";
+	public static final String OAUTH_PACKAGE = "oAuthPackage";
     protected String packageName = "Wonderlic.Swagger";
     protected String packageVersion = "1.0.0";
     protected String clientPackage = "Wonderlic.Swagger.Client";
+	protected String oAuthPackage = "Wonderlic.Swagger.OAuth";
     protected String sourceFolder = "src" + File.separator + "main" + File.separator + "CsharpDotNet2";
 
     protected String infoTitle = "";
@@ -122,12 +124,22 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
         } else {
             additionalProperties.put(CLIENT_PACKAGE, clientPackage);
         }
+		if (additionalProperties.containsKey(OAUTH_PACKAGE)) {
+            this.setOAuthPackage((String) additionalProperties.get(OAUTH_PACKAGE));
+        } else {
+            additionalProperties.put(OAUTH_PACKAGE, oAuthPackage);
+        }
         supportingFiles.add(new SupportingFile("Configuration.mustache",
                 sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator), "Configuration.cs"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache",
                 sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator), "ApiClient.cs"));
+		supportingFiles.add(new SupportingFile("OAuthClient.mustache",
+                sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator), "OAuthClient.cs"));
         supportingFiles.add(new SupportingFile("ApiException.mustache",
                 sourceFolder + File.separator + clientPackage.replace(".", java.io.File.separator), "ApiException.cs"));
+		String oAuthFileFolder = oAuthModelFileFolder();
+		supportingFiles.add(new SupportingFile("OAuthToken.mustache",
+                sourceFolder + File.separator + oAuthFileFolder.replace(".", java.io.File.separator), "OAuthToken.cs"));
         supportingFiles.add(new SupportingFile("packages.config.mustache", "vendor", "packages.config"));
         supportingFiles.add(new SupportingFile("compile-mono.sh.mustache", "", "compile-mono.sh"));
         supportingFiles.add(new SupportingFile("README.md", "", "README.md"));
@@ -136,6 +148,10 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
 
     public void setClientPackage(String clientPackage) {
         this.clientPackage = clientPackage;
+    }
+	
+	public void setOAuthPackage(String oAuthPackage) {
+        this.oAuthPackage = oAuthPackage;
     }
 
     public void setPackageName(String packageName) {
@@ -174,6 +190,10 @@ public class CsharpDotNet2ClientCodegen extends DefaultCodegen implements Codege
     @Override
     public String modelFileFolder() {
         return outputFolder + File.separator + sourceFolder + File.separator + modelPackage().replace('.', File.separatorChar) + File.separator + infoTitle;
+    }
+	
+	public String oAuthModelFileFolder() {
+        return modelPackage().replace('.', File.separatorChar) + File.separator + "OAuth";
     }
 
     @Override
